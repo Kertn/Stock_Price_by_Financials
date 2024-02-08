@@ -82,12 +82,13 @@ def data(ticker):
     return df
 
 def regplot_corr(df):
+    print('Final Shape', df.shape)
     df = df.fillna(0)
     df_new = df[['Stock_Price', 'Ticker', 'Normalized EBITDA']]
     df_corr = df.drop("Ticker", axis='columns')
     print(df_new.head(50))
 
-    print(df_corr.corr()['Stock_Price'].nlargest(n=50))
+    print(df_corr.corr()['Stock_Price'].abs().nlargest(n=50))
     sns.regplot(x='Normalized EBITDA', y='Stock_Price', data=df)
     pearson_coef, p_value = stats.pearsonr(df['Normalized EBITDA'], df['Stock_Price'])
     print("The Pearson Correlation Coefficient is", pearson_coef, " with a P-value of P =", p_value)
@@ -96,16 +97,14 @@ def regplot_corr(df):
 def main():
     simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
     df = pd.DataFrame()
+    total = 0
     for i in tqdm(pd.read_csv(r'C:\Program\Neural_Network\Market_Ratios_Model\Full_list.csv', encoding='utf-8').values[0:200]):
         answ = data(i[0])
         if answ is not 0:
             df = pd.concat([df, answ])
-    # print(len(all))
-    # total = 0
-    # for i in all:
-    #     if isinstance(i, int):
-    #         total += 1
-    # print('total erors', total)
+        else:
+            total += 1
+    print('total erors', total)
     regplot_corr(df)
 
 if __name__ == '__main__':
