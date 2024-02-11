@@ -2,6 +2,8 @@ import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.linear_model import LinearRegression
+import numpy as np
 from tqdm import tqdm
 from scipy import stats
 from datetime import date
@@ -73,39 +75,71 @@ def data(ticker):
         print("Ticker or history doesn't work - ", ticker)
         return 0
 
-    df = df.fillna(0)
+    df = df.fillna(-1)
     df = df.astype(float)
     df['Ticker'] = ticker
 
-    print('SHAPE - ', ticker, ': ', df.shape)
-
     return df
 
-def regplot_corr(df):
-    print('Final Shape', df.shape)
-    df = df.fillna(0)
-    df_new = df[['Stock_Price', 'Ticker', 'Normalized EBITDA']]
-    df_corr = df.drop("Ticker", axis='columns')
-    print(df_new.head(50))
+def add_miss_values(df):
+    df.index = list(range(0, df.shape[0]))
+    df_drop = df.copy()
+    for i in range(df_drop.shape[0]):
+        df_1 = df_drop.iloc[i]
+        miss_values = len(df_1[df_1 == -1])
+        if miss_values > 30:
+            df.drop(df_1.name, inplace=True)
+    df.index = list(range(0, df.shape[0]))
 
-    print(df_corr.corr()['Stock_Price'].abs().nlargest(n=50))
-    sns.regplot(x='Normalized EBITDA', y='Stock_Price', data=df)
-    pearson_coef, p_value = stats.pearsonr(df['Normalized EBITDA'], df['Stock_Price'])
-    print("The Pearson Correlation Coefficient is", pearson_coef, " with a P-value of P =", p_value)
-    plt.show()
+    for col_name in df.columns:
+        print(col_name)
+        df_train = df.loc[df[col_name] != -1]
+        X = df_train['Stock_Price']
+        df_train = df_train[col_name]
+        Y_train = df_train.values.reshape(-1, 1)
+        X_train = X.values.reshape(-1, 1)
+        regr = LinearRegression()
+        regr.fit(X_train, Y_train)
+        column = []
+        for miss_data, X_val in zip(df[col_name], df['Stock_Price']):
+            if miss_data == -1:
+                miss_data = int(regr.predict(np.array([X_val]).reshape(-1,1))[0][0])
+            column.append(miss_data)
+        # print(df[col_name])
+        df[col_name] = column
+        # print(df[col_name])
+    print('Final shape', df.shape)
+def regplot_corr(df, nlarge):
+    print('Final Shape', df.shape)
+    df = df.fillna(-1)
+    df_new = df[['Stock_Price', 'Ticker', 'Normalized EBITDA']]
+    df_pred_corr = df.drop("Ticker", axis='columns')
+
+
+    corr_df = df_pred_corr.corr()['Stock_Price'].abs().nlargest(n=nlarge)
+
+    df_pred = df_pred_corr[corr_df.index]
+
+    add_miss_values(df_pred)
+
+    # sns.regplot(x='Amortization', y='Stock_Price', data=df)
+    # pearson_coef, p_value = stats.pearsonr(df['Amortization'], df['Stock_Price'])
+    # print("The Pearson Correlation Coefficient is", pearson_coef, " with a P-value of P =", p_value)
+    # plt.show()
 
 def main():
+    pd.options.mode.chained_assignment = None
     simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
     df = pd.DataFrame()
     total = 0
-    for i in tqdm(pd.read_csv(r'C:\Program\Neural_Network\Market_Ratios_Model\Full_list.csv', encoding='utf-8').values[0:200]):
+    for i in tqdm(pd.read_csv(r'C:\Program\Neural_Network\Market_Ratios_Model\Aerospace.csv', encoding='utf-8').values[0:50]):
         answ = data(i[0])
         if answ is not 0:
             df = pd.concat([df, answ])
         else:
             total += 1
     print('total erors', total)
-    regplot_corr(df)
+    regplot_corr(df, 100)
 
 if __name__ == '__main__':
     main()
