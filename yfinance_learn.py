@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.linear_model import LinearRegression
 import numpy as np
+import optuna
 from tqdm import tqdm
 from scipy import stats
 from datetime import date
@@ -140,14 +141,15 @@ def preprocess(df_initial, nlarge, miss_data_column_allowed, miss_data_row_allow
     ##df_initial = add_new_ratios()
 
 
-    print('Shape before', df_initial.shape)
-    df_initial = df_initial.fillna(-1)
+    # print('Shape before', df_initial.shape)
+    # df_initial = df_initial.fillna(-1)
 
     # # Save downloaded data
-    df_initial.to_csv('Full_list_collected.csv', index=False, encoding='utf-8')
-    #df_final = pd.read_csv('Full_list_collected.csv')
+    #df_initial.to_csv('Full_list_collected.csv', index=False, encoding='utf-8')
+    df_initial = pd.read_csv('Full_list_collected.csv')
+    print('Shape before', df_initial.shape)
 
-    df = df_initial
+    df = df_initial[:1000]
     #df = df_initial.drop("Ticker", axis='columns')
 
     df_remove = remove_most_miss(df, miss_data_column_allowed, miss_data_row_allowed)
@@ -158,6 +160,8 @@ def preprocess(df_initial, nlarge, miss_data_column_allowed, miss_data_row_allow
     df = add_miss_values(df_remove)
 
     corr_df = df_remove.corr()['Stock_Price'].abs().nlargest(n=nlarge)
+
+    print('Corr_df.shape', corr_df.shape)
 
     #disp_best_corr(corr_df, df_initial, df)
 
@@ -194,16 +198,20 @@ def preprocess(df_initial, nlarge, miss_data_column_allowed, miss_data_row_allow
     # XgBoost(X_train, X_test, y_train, y_test)
     # random_forest(X_train, X_test, y_train, y_test)
 
-    # BayesianRidg(X, Y)
-    # GradBoostRegr(X, Y)
-    # CatBoost(X, Y)
-    # XgBoost(X, Y)
-    model = random_forest(X, Y)
+    all_models = []
 
-    estimate_annualy_income(model, X_estimate, ticker_coll, price_coll)
+    all_models.append(NeuralNetTorch(X, Y))
+    all_models.append(BayesianRidg(X, Y))
+    all_models.append(GradBoostRegr(X, Y))
+    all_models.append(XgBoost(X, Y))
+    all_models.append(random_forest(X, Y))
+
+    estimate_annualy_income(all_models, X_estimate, ticker_coll, price_coll)
+
 
     #TODO Создать визуализицию прибыли каждой модели !! + Проверить где больше успех моделей на рынке быков или медведей? + Проверит зависимость качества к количество features И процента жажды выгоды к actual income !!!
 
+    #TODO Сделать тоже самое для TEST DATA !!!
 
 
 def main():
@@ -212,14 +220,14 @@ def main():
     df = pd.DataFrame()
     total = 0
 
-    for ticker_count, i in tqdm(enumerate(pd.read_csv(fr'C:\Program\Neural_Network\Market_Ratios_Model\Full_list.csv', encoding='utf-8').values)):
-        answ = data(i[0], ticker_count)
-        if answ is not 0:
-            df = pd.concat([df, answ])
-        else:
-            total += 1
-    print('total erors', total)
-    preprocess(df_initial=df, nlarge=150, miss_data_column_allowed=0.15, miss_data_row_allowed=0.2)
+    # for ticker_count, i in tqdm(enumerate(pd.read_csv(fr'C:\Program\Neural_Network\Market_Ratios_Model\Full_list.csv', encoding='utf-8').values)):
+    #     answ = data(i[0], ticker_count)
+    #     if answ is not 0:
+    #         df = pd.concat([df, answ])
+    #     else:
+    #         total += 1
+    # print('total erors', total)
+    preprocess(df_initial=df, nlarge=120, miss_data_column_allowed=0.15, miss_data_row_allowed=0.2)
 
 if __name__ == '__main__':
     main()
