@@ -11,9 +11,9 @@ from datetime import date
 from warnings import simplefilter
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
+from train_test_splt import data_split
 from train_models import *
 from estimate_func import estimate_annualy_income
-from add_new_ratios import add_new_ratios
 
 def drop_incorrect_column(df, ticker):
     pred = '00-00-00'
@@ -136,10 +136,14 @@ def disp_best_corr(corr_df, df_initial, df):
     #print("The Pearson Correlation Coefficient is", pearson_coef, " with a P-value of P =", p_value)
     plt.show()
 
-def preprocess(df_initial, nlarge, miss_data_column_allowed, miss_data_row_allowed):
-    ##TODO
-    ##df_initial = add_new_ratios()
-
+#def preprocess(optuna, df_initial):
+def preprocess(optuna):
+    nlarge = optuna.suggest_int('nlarge', 20, 120, 5)
+    num_of_epochs = optuna.suggest_int('num_of_epochs', 100, 10000, 50)
+    miss_data_column_allowed = optuna.suggest_float('miss_data_column_allowed', 0.05, 0.8, step=0.01)
+    miss_data_row_allowed = optuna.suggest_float('miss_data_row_allowed', 0.05, 0.8, step=0.01)
+    price_discount = optuna.suggest_float('price_discount', 0.01, 0.99, step=0.02)
+    lr = optuna.suggest_float('lr', 0.001, 0.1, step=0.001)
 
     # print('Shape before', df_initial.shape)
     # df_initial = df_initial.fillna(-1)
@@ -147,9 +151,9 @@ def preprocess(df_initial, nlarge, miss_data_column_allowed, miss_data_row_allow
     # # Save downloaded data
     #df_initial.to_csv('Full_list_collected.csv', index=False, encoding='utf-8')
     df_initial = pd.read_csv('Full_list_collected.csv')
-    print('Shape before', df_initial.shape)
+    # print('Shape before', df_initial.shape)
 
-    df = df_initial[:1000]
+    df = df_initial
     #df = df_initial.drop("Ticker", axis='columns')
 
     df_remove = remove_most_miss(df, miss_data_column_allowed, miss_data_row_allowed)
@@ -160,8 +164,6 @@ def preprocess(df_initial, nlarge, miss_data_column_allowed, miss_data_row_allow
     df = add_miss_values(df_remove)
 
     corr_df = df_remove.corr()['Stock_Price'].abs().nlargest(n=nlarge)
-
-    print('Corr_df.shape', corr_df.shape)
 
     #disp_best_corr(corr_df, df_initial, df)
 
@@ -184,7 +186,7 @@ def preprocess(df_initial, nlarge, miss_data_column_allowed, miss_data_row_allow
 
     X_estimate = df_final.drop(['Ticker', 'Stock_Price'], axis='columns').to_numpy()
 
-    print('Sizes', X.shape)
+    # print('Sizes', X.shape)
 
     # X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
 
@@ -199,14 +201,18 @@ def preprocess(df_initial, nlarge, miss_data_column_allowed, miss_data_row_allow
     # random_forest(X_train, X_test, y_train, y_test)
 
     all_models = []
+    try:
 
-    all_models.append(NeuralNetTorch(X, Y))
-    all_models.append(BayesianRidg(X, Y))
-    all_models.append(GradBoostRegr(X, Y))
-    all_models.append(XgBoost(X, Y))
-    all_models.append(random_forest(X, Y))
+        all_models.append(NeuralNetTorch(X, Y, num_of_epochs, lr))
+        # all_models.append(BayesianRidg(X, Y))
+        # all_models.append(GradBoostRegr(X, Y))
+        # all_models.append(XgBoost(X, Y))
+        # all_models.append(random_forest(X, Y))
 
-    estimate_annualy_income(all_models, X_estimate, ticker_coll, price_coll)
+        answ = estimate_annualy_income(all_models, X_estimate, ticker_coll, price_coll, price_discount)
+    except:
+        return 0
+    return answ
 
 
     #TODO Создать визуализицию прибыли каждой модели !! + Проверить где больше успех моделей на рынке быков или медведей? + Проверит зависимость качества к количество features И процента жажды выгоды к actual income !!!
@@ -227,7 +233,14 @@ def main():
     #     else:
     #         total += 1
     # print('total erors', total)
-    preprocess(df_initial=df, nlarge=120, miss_data_column_allowed=0.15, miss_data_row_allowed=0.2)
+    #preprocess(df_initial=df, nlarge=120, miss_data_column_allowed=0.15, miss_data_row_allowed=0.2)
+    opt_st = optuna.create_study(study_name='NeurNet',
+                                 direction='maximize')
+    opt_st.optimize(preprocess, n_trials=150, n_jobs=1)
+
+    optuna.visualization.plot_param_importances(opt_st, target_name="f1_score")
+
+    #preprocess(df_initial=df, nlarge=120, miss_data_column_allowed=0.15, miss_data_row_allowed=0.2)
 
 if __name__ == '__main__':
     main()

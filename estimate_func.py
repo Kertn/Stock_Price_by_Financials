@@ -1,14 +1,11 @@
-# TODO estimate function by annualy earning from predictions
 from statistics import mean
 from matplotlib import pyplot as plt
 import numpy as np
-def estimate_annualy_income(models, X_estimate, tickers, price_coll):
+def estimate_annualy_income(models, X_estimate, tickers, price_coll, price_discount):
 
-    fig, axs = plt.subplots(5)
+    #fig, axs = plt.subplots(5)
 
     for ind, model in enumerate(models):
-        print('Model - ', model)
-
         prev_ticker = ''
         total_income_percent = []
         total_income_values = []
@@ -25,12 +22,12 @@ def estimate_annualy_income(models, X_estimate, tickers, price_coll):
 
                 price_pred = model.predict(X.reshape(1, -1))
 
-                if price_pred * 0.8 > actual_price:
+                if price_pred * price_discount > actual_price:
                     stocks = total_balance / actual_price
                     invest_price = stocks * actual_price
                     total_invested += invest_price
                     side = 1
-                elif price_pred < actual_price * 0.8:
+                elif price_pred < actual_price * price_discount:
                     stocks = total_balance / actual_price
                     invest_price = stocks * actual_price
                     total_invested += invest_price
@@ -51,12 +48,12 @@ def estimate_annualy_income(models, X_estimate, tickers, price_coll):
 
                 price_pred = model.predict(X.reshape(1, -1))
 
-                if price_pred * 0.8 > actual_price:
+                if price_pred * price_discount > actual_price:
                     stocks = total_balance / actual_price
                     invest_price = stocks * actual_price
                     total_invested += invest_price
                     side = 1
-                elif price_pred < actual_price * 0.8:
+                elif price_pred < actual_price * price_discount:
                     stocks = total_balance / actual_price
                     invest_price = stocks * actual_price
                     total_invested += invest_price
@@ -65,14 +62,14 @@ def estimate_annualy_income(models, X_estimate, tickers, price_coll):
                 else:
                     invest_price = 0
 
-        #print('INCOME_Percents', total_income_percent)
-        #print('INCOME_values', total_income_values)
-        print('INCOME_RESULT', total_income)
-        print('TOTAL_INVESTED', total_invested)
-        print('Income ratio', total_income/total_invested)
-        print('MEAN', mean(total_income_percent))
+        # print('INCOME_RESULT', total_income)
+        print('len_total_invest', len(total_income_percent))
+        # print('TOTAL_INVESTED', total_invested)
+        # print('Income ratio', total_income/total_invested)
+        # print('MEAN', mean(total_income_percent))
+        #
+        # print('ind', ind)
 
-        print('ind', ind)
-
-        axs[ind].plot(np.linspace(0, 1, len(total_income_values)), total_income_values)
-    plt.show()
+        #axs[ind].plot(np.linspace(0, 1, len(total_income_values)), total_income_values)
+    return total_income/total_invested
+    #plt.show()

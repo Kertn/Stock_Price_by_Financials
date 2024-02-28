@@ -63,7 +63,7 @@ def random_forest(X_train, y_train):
     return reg_model
 
 
-def NeuralNetTorch(X_train, y_train):
+def NeuralNetTorch(X_train, y_train, num_of_epochs, lr):
 
     class linearRegression(nn.Module):
         def __init__(self, input_dim):
@@ -98,9 +98,9 @@ def NeuralNetTorch(X_train, y_train):
     reg_model = linearRegression(input_dim)
 
     loss = nn.MSELoss()
-    optimizers = optim.Adam(params=reg_model.parameters(), lr=0.01)
+    optimizers = optim.Adam(params=reg_model.parameters(), lr=lr)
 
-    num_of_epochs = 300
+    num_of_epochs = num_of_epochs
     for i in range(num_of_epochs):
 
         y_train_prediction = reg_model(X_train)
@@ -110,7 +110,7 @@ def NeuralNetTorch(X_train, y_train):
         optimizers.step()
 
     with torch.no_grad():
-        print('train_score - linearRegression', r2_score(reg_model.forward(X_train), y_train))
+        #print('train_score - linearRegression', r2_score(reg_model.forward(X_train), y_train))
         # print('test_score - linearRegression', reg_model.score(X_test, y_test))
         print('test_mean_abs_perc_error - linearRegression', mean_absolute_percentage_error(reg_model.forward(X_train), y_train))
         print('\n\n')
