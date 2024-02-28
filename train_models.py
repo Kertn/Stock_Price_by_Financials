@@ -63,7 +63,8 @@ def random_forest(X_train, y_train):
     return reg_model
 
 
-def NeuralNetTorch(X_train, y_train, num_of_epochs, lr):
+#def NeuralNetTorch(X_train, y_train, num_of_epochs, lr):
+def NeuralNetTorch(X_train, y_train, X_test, y_test):
 
     class linearRegression(nn.Module):
         def __init__(self, input_dim):
@@ -92,15 +93,18 @@ def NeuralNetTorch(X_train, y_train, num_of_epochs, lr):
     X_train = torch.from_numpy(X_train).float()
     y_train = torch.from_numpy(y_train).float()
 
+    X_test = torch.from_numpy(X_test).float()
+    y_test = torch.from_numpy(y_test).float()
+
 
     input_dim = X_train.shape[1]
     torch.manual_seed(42)
     reg_model = linearRegression(input_dim)
 
     loss = nn.MSELoss()
-    optimizers = optim.Adam(params=reg_model.parameters(), lr=lr)
+    optimizers = optim.Adam(params=reg_model.parameters(), lr=0.01)
 
-    num_of_epochs = num_of_epochs
+    num_of_epochs = 100
     for i in range(num_of_epochs):
 
         y_train_prediction = reg_model(X_train)
@@ -112,7 +116,7 @@ def NeuralNetTorch(X_train, y_train, num_of_epochs, lr):
     with torch.no_grad():
         #print('train_score - linearRegression', r2_score(reg_model.forward(X_train), y_train))
         # print('test_score - linearRegression', reg_model.score(X_test, y_test))
-        print('test_mean_abs_perc_error - linearRegression', mean_absolute_percentage_error(reg_model.forward(X_train), y_train))
+        print('test_mean_abs_perc_error - linearRegression', mean_absolute_percentage_error(reg_model.forward(X_test), y_test))
         print('\n\n')
 
     return reg_model
