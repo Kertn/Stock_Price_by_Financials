@@ -78,12 +78,21 @@ def estimate_annualy_income(models, X_estimate, tickers, price_coll, price_disco
     return total_income/total_invested
 
 
-def estimate_annualy_income_test(models, train_df, y_test, tickers, price_discount, bear_inv):
+def estimate_annualy_income_test(models, train_df, y_test, price_discount, bear_inv):
+    print('TRAIN_DF', train_df.groupby(train_df['Ticker'].astype(int)).head(250))
     test_df = train_df.groupby(train_df['Ticker'].astype(int)).last()
+    tickers = test_df['Ticker']
+    print('Tqable')
+    print(test_df.head(100))
+    print('Y_test')
+    print(y_test)
+    print('PRICE')
+    print(test_df['Stock_Price'].head(100))
     price_coll = test_df['Stock_Price']
     test_df.drop(['Stock_Price', 'Ticker'], axis=1, inplace=True)
     test_df = preprocessing.normalize(test_df.to_numpy())
-    print('TEST', test_df)
+    print('Len_all', len(test_df), len(tickers), len(price_coll), len(y_test))
+    # print('TEST', test_df)
     for ind, model in enumerate(models):
         prev_ticker = ''
         total_income_percent = []
@@ -94,25 +103,28 @@ def estimate_annualy_income_test(models, train_df, y_test, tickers, price_discou
         total_balance = 5000
         invest = False
         for X, ticker, actual_price, y_price in zip(test_df, tickers, price_coll, y_test):
+            print('\n\n')
             print('Tiker', ticker)
+            print('Actual_price', actual_price)
+            print('1y_Price', y_price)
             current_ticker = str(ticker).split('.')[0]
             current_year = str(ticker).split('.')[1]
 
             price_pred = model.predict(X.reshape(1, -1))
 
-            print('MODEL_PREDICT', price_pred)
-            print('ACTUAL_PRICE', actual_price)
-            print('FUture_Price', y_price)
-            print('\n')
+            # print('MODEL_PREDICT', price_pred)
+            # print('ACTUAL_PRICE', actual_price)
+            # print('FUture_Price', y_price)
+            # print('\n')
 
             if price_pred * price_discount > actual_price:
-                stocks = total_balance / actual_price
+                stocks = int(total_balance / actual_price)
                 invest_price = stocks * actual_price
                 total_invested += invest_price
                 side = 1
                 invest = True
             elif (price_pred < actual_price * price_discount) and bear_inv:
-                stocks = total_balance / actual_price
+                stocks = int(total_balance / actual_price)
                 invest_price = stocks * actual_price
                 total_invested += invest_price
                 side = 0
@@ -123,6 +135,9 @@ def estimate_annualy_income_test(models, train_df, y_test, tickers, price_discou
             if invest:
                 if side:
                     total_income_percent.append((stocks * y_price) / invest_price)
+                    if ((stocks * y_price) / invest_price) > 8:
+                        print('Super error')
+                        print('PErcent', (stocks * y_price) / invest_price)
                     total_income += stocks * y_price - invest_price
                     total_income_values.append(total_income)
                 else:
@@ -132,18 +147,27 @@ def estimate_annualy_income_test(models, train_df, y_test, tickers, price_discou
             else:
                 continue
 
-        print('\n')
-        print('INCOME_RESULT', total_income)
+        #print('INCOME_RESULT', total_income)
+        print('Percent', total_income_percent)
+        print('Value', total_income_values)
         print('len_total_invest', len(total_income_percent))
-        print('TOTAL_INVESTED', total_invested)
-        print('Income ratio', total_income/total_invested)
-        print('MEAN', mean(total_income_percent))
-        print('MEAN_percent', total_income_percent)
+        #print('TOTAL_INVESTED', total_invested)
+        print('Total_invested', total_invested)
+        print('total_income', total_income)
+        try:
+            estim = total_income/total_invested
+        except:
+            estim = 0
+        print('Income ratio', estim)
+        #print('MEAN', mean(total_income_percent))
+        #print('MEAN_percent', sorted(total_income_percent))
 
+        #TODO!!!! Make output: Создать формулу, Пример: Отнять количчество результатов > 1.10% от <1.10% и добавить процент прибыли * 1000
+        print('sum([1 if i > 1.25 else -2 for i in total_income_percent])', sum([1 if i > 1.25 else -2 for i in total_income_percent]))
         # print('ind', ind)
 
         # axs[ind].plot(np.linspace(0, 1, len(total_income_values)), total_income_values)
 
     # plt.show()
 
-    return total_income / total_invested
+    return sum([1 if i > 1.25 else -2 for i in total_income_percent])

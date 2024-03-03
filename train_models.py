@@ -9,6 +9,7 @@ from sklearn.datasets import make_regression
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn import linear_model
 import catboost as ctb
+from tqdm import tqdm
 import xgboost as xgb
 
 def BayesianRidg(X_train, y_train):
@@ -49,37 +50,37 @@ def XgBoost(X_train, y_train):
     return reg_model
 
 
-def random_forest(X_train, y_train):
+def random_forest(X_train, y_train, X_test, y_test, dict):
 
-    # TODO Add and Tune the params!
+    reg_model = RandomForestRegressor(bootstrap=dict['bootstrap'],
+                                      max_depth=dict['max_depth'],
+                                      max_features=dict['max_features'],
+                                      min_samples_leaf=dict['min_samples_leaf'],
+                                      min_samples_split=dict['min_samples_split'],
+                                      n_estimators=dict['n_estimators'],
+                                      random_state=0)
 
-    reg_model = RandomForestRegressor(random_state=0)
     reg_model.fit(X_train, y_train.ravel())
-    print('train_score - random_forest', reg_model.score(X_train, y_train))
-    #print('test_score - random_forest', reg.score(X_test, y_test))
-    print('test_mean_abs_perc_error - random_forest', mean_absolute_percentage_error(reg_model.predict(X_train), y_train))
-    print('\n\n')
+
+    print('test_mean_abs_perc_error - random_forest', mean_absolute_percentage_error(reg_model.predict(X_test), y_test))
 
     return reg_model
 
 
-#def NeuralNetTorch(X_train, y_train, num_of_epochs, lr):
-def NeuralNetTorch(X_train, y_train, X_test, y_test):
+def NeuralNetTorch(X_train, y_train, X_test, y_test, num_of_epochs, lr):
+#def NeuralNetTorch(X_train, y_train, X_test, y_test):
 
     class linearRegression(nn.Module):
         def __init__(self, input_dim):
             super(linearRegression, self).__init__()
             self.model = nn.Sequential(
-                         nn.Linear(input_dim, 60),
+                         nn.Linear(input_dim, 64),
                          nn.ReLU(),
-                         nn.Linear(60, 48),
+                         nn.Linear(64, 40),
                          nn.ReLU(),
-                         nn.Linear(48, 22),
+                         nn.Linear(40, 25),
                          nn.ReLU(),
-                         nn.Linear(22, 11),
-                         nn.ReLU(),
-                         nn.Linear(11, 1))
-
+                         nn.Linear(25, 1))
         def forward(self, d):
             out = self.model(d)
             return out
@@ -102,10 +103,10 @@ def NeuralNetTorch(X_train, y_train, X_test, y_test):
     reg_model = linearRegression(input_dim)
 
     loss = nn.MSELoss()
-    optimizers = optim.Adam(params=reg_model.parameters(), lr=0.01)
+    optimizers = optim.Adam(params=reg_model.parameters(), lr=lr)
 
-    num_of_epochs = 100
-    for i in range(num_of_epochs):
+    num_of_epochs = num_of_epochs
+    for i in tqdm(range(num_of_epochs)):
 
         y_train_prediction = reg_model(X_train)
         loss_value = loss(y_train_prediction.squeeze(), y_train)
