@@ -170,7 +170,7 @@ def preprocess(optuna):
 
     # # Save downloaded data
     #df_initial.to_csv('Full_list_collected.csv', index=False, encoding='utf-8')
-    df_initial = pd.read_csv('Full_list_collected.csv')[:30]
+    df_initial = pd.read_csv('Full_list_collected.csv')
     # print('Shape before', df_initial.shape)
 
     df = df_initial
@@ -191,28 +191,23 @@ def preprocess(optuna):
 
     df_final = pd.concat([df_final, Ticker_col], axis=1)
 
-    print('Shinemachuynia', df_final.groupby(df_final['Ticker'].astype(int))['Ticker'].head(100))
-
-    print('AAAAAAAAAAAAAAA', df_final.groupby(df_final['Ticker'].astype(int))['Ticker'].first().astype(str))
-
     dataf = df_final.groupby(df_final['Ticker'].astype(int)).first()
 
     df_group = dataf[dataf['Ticker'].astype(str).str.endswith('1')]
 
-    print('df_group', df_group)
     df_final = pd.concat([df_final, df_group]).drop_duplicates(keep=False)
 
     test_df = df_final.groupby(df_final['Ticker'].astype(int)).first()
-    print('df_final', df_final['Ticker'].head(100))
-    print('test_df', test_df['Ticker'].head(100))
+
     train_df = pd.concat([df_final, test_df]).drop_duplicates(keep=False)
 
 
     train_df = train_df.sort_values('Ticker')
 
+    print('Sort', test_df.sort_values('Stock_Price'))
+
     y_train = train_df['Stock_Price'].to_numpy()
     test_df = test_df[test_df['Ticker'].astype(int).apply(lambda x: x in train_df['Ticker'].astype(int).values)]
-    print('CHTIETO', test_df[['Stock_Price', 'Ticker']].head(130))
     y_test = test_df['Stock_Price']
 
     x_train = preprocessing.normalize(train_df.drop(['Stock_Price', 'Ticker'], axis=1).to_numpy())
@@ -229,19 +224,19 @@ def preprocess(optuna):
     # random_forest(X_train, X_test, y_train, y_test)
 
     all_models = []
-    try:
+    # try:
 
         #all_models.append(NeuralNetTorch(x_train, y_train, x_test, y_test, num_of_epochs, lr))
         #all_models.append(NeuralNetTorch(x_train, y_train, x_test, y_test))
         # all_models.append(BayesianRidg(X, Y))
         # all_models.append(GradBoostRegr(X, Y))
         # all_models.append(XgBoost(X, Y))
-        all_models.append(random_forest(x_train, y_train, x_test, y_test, random_forest_dict))
+    all_models.append(random_forest(x_train, y_train, x_test, y_test, random_forest_dict))
 
-        answ = estimate_annualy_income_test(all_models, train_df, y_test, price_discount=price_discount, bear_inv=False)
-        #answ = estimate_annualy_income_test(all_models, train_df, y_test, test_ticker_coll, price_discount=0.8, bear_inv=False)
-    except:
-        return -1
+    answ = estimate_annualy_income_test(all_models, train_df, y_test, price_discount=price_discount, bear_inv=False)
+    #answ = estimate_annualy_income_test(all_models, train_df, y_test, test_ticker_coll, price_discount=0.8, bear_inv=False)
+    # except:
+    #     return -1
     return answ
 
 
@@ -268,7 +263,7 @@ def main():
 
     opt_st = optuna.create_study(study_name='NeurNet',
                                  direction='maximize')
-    opt_st.optimize(preprocess, n_trials=130, n_jobs=1)
+    opt_st.optimize(preprocess, n_trials=130, n_jobs=3)
 
     optuna.visualization.plot_param_importances(opt_st, target_name="f1_score")
 
