@@ -133,111 +133,120 @@ def disp_best_corr(corr_df, df_initial, df):
     #print("The Pearson Correlation Coefficient is", pearson_coef, " with a P-value of P =", p_value)
     plt.show()
 
-#def preprocess(df_initial, nlarge, miss_data_column_allowed, miss_data_row_allowed):
-def preprocess(optuna):
+def preprocess(df_initial, nlarge, miss_data_column_allowed, miss_data_row_allowed, name):
+# def preprocess(optuna):
 
     # General
 
-    miss_data_column_allowed = optuna.suggest_float('miss_data_column_allowed', 0.05, 0.8, step=0.01)
-    miss_data_row_allowed = optuna.suggest_float('miss_data_row_allowed', 0.05, 0.8, step=0.01)
-    price_discount = optuna.suggest_float('price_discount', 0.01, 0.99, step=0.02)
-    nlarge = optuna.suggest_int('nlarge', 20, 120, 5)
-
-
-    # PyTorch
-
-    # num_of_epochs = optuna.suggest_int('num_of_epochs', 10000, 250000, 5000)
-    # lr = optuna.suggest_float('lr', 0.001, 0.1, step=0.001)
-
-    # RandomForest
-
-    bootstrap = optuna.suggest_categorical("bootstrap", [True, False])
-    max_depth = optuna.suggest_int('max_depth', 10, 200, 10)
-    max_features = optuna.suggest_categorical("max_features", ['sqrt', 'log2'])
-    min_samples_leaf = optuna.suggest_int('min_samples_leaf', 1, 6, 1)
-    min_samples_split = optuna.suggest_int('min_samples_split', 2, 12, 2)
-    n_estimators = optuna.suggest_int('n_estimators', 200, 6000, 200)
-
-    random_forest_dict = {'bootstrap': bootstrap,
-                          'max_depth': max_depth,
-                          'max_features': max_features,
-                          'min_samples_leaf': min_samples_leaf,
-                          'min_samples_split': min_samples_split,
-                          'n_estimators': n_estimators}
+    # miss_data_column_allowed = optuna.suggest_float('miss_data_column_allowed', 0.05, 0.8, step=0.01)
+    # miss_data_row_allowed = optuna.suggest_float('miss_data_row_allowed', 0.05, 0.8, step=0.01)
+    # price_discount = optuna.suggest_float('price_discount', 0.01, 0.99, step=0.02)
+    # nlarge = optuna.suggest_int('nlarge', 20, 120, 5)
+    #
+    #
+    # # PyTorch
+    #
+    # # num_of_epochs = optuna.suggest_int('num_of_epochs', 10000, 250000, 5000)
+    # # lr = optuna.suggest_float('lr', 0.001, 0.1, step=0.001)
+    #
+    # # RandomForest
+    #
+    # # random_forest_dict = {'bootstrap': optuna.suggest_categorical("bootstrap", [True, False]),
+    # #                       'max_depth': optuna.suggest_int('max_depth', 10, 350, 10),
+    # #                       'max_features': optuna.suggest_categorical("max_features", ['sqrt', 'log2']),
+    # #                       'min_samples_leaf': optuna.suggest_int('min_samples_leaf', 1, 6, 1),
+    # #                       'min_samples_split': optuna.suggest_int('min_samples_split', 2, 16, 2),
+    # #                       'n_estimators': optuna.suggest_int('n_estimators', 200, 7600, 200)}
+    #
+    # # XGBoost
+    #
+    # XGBoost_Params = {
+    #     "objective": "reg:squarederror",
+    #     "eval_metric" : "mape",
+    #     "n_estimators": optuna.suggest_int("n_estimators", 100, 5000, 100),
+    #     "verbosity": 0,
+    #     "learning_rate": optuna.suggest_float("learning_rate", 1e-3, 0.1),
+    #     "scale_pos_weight":optuna.suggest_int("scale_pos_weight", 1, 6),
+    #     "max_depth": optuna.suggest_int("max_depth", 1, 15),
+    #     "subsample": optuna.suggest_float("subsample", 0.05, 1.0),
+    #     "colsample_bytree": optuna.suggest_float("colsample_bytree", 0.05, 1.0),
+    #     "min_child_weight": optuna.suggest_int("min_child_weight", 1, 20),
+    # }
 
     # print('Shape before', df_initial.shape)
-    # df_initial = df_initial.fillna(-1)
 
     # # Save downloaded data
-    #df_initial.to_csv('Full_list_collected.csv', index=False, encoding='utf-8')
-    df_initial = pd.read_csv('Full_list_collected.csv')
-    # print('Shape before', df_initial.shape)
-
-    df = df_initial
-    #df = df_initial.drop("Ticker", axis='columns')
-
-    df_remove = remove_most_miss(df, miss_data_column_allowed, miss_data_row_allowed)
-
-    Ticker_col = df_remove['Ticker']
-    df_remove = df_remove.drop("Ticker", axis='columns')
-
-    df = add_miss_values(df_remove)
-
-    corr_df = df_remove.corr()['Stock_Price'].abs().nlargest(n=nlarge)
-
-    #disp_best_corr(corr_df, df_initial, df)
-
-    df_final = df[corr_df.index]
-
-    df_final = pd.concat([df_final, Ticker_col], axis=1)
-
-    dataf = df_final.groupby(df_final['Ticker'].astype(int)).first()
-
-    df_group = dataf[dataf['Ticker'].astype(str).str.endswith('1')]
-
-    df_final = pd.concat([df_final, df_group]).drop_duplicates(keep=False)
-
-    test_df = df_final.groupby(df_final['Ticker'].astype(int)).first()
-
-    train_df = pd.concat([df_final, test_df]).drop_duplicates(keep=False)
-
-
-    train_df = train_df.sort_values('Ticker')
-
-    print('Sort', test_df.sort_values('Stock_Price'))
-
-    y_train = train_df['Stock_Price'].to_numpy()
-    test_df = test_df[test_df['Ticker'].astype(int).apply(lambda x: x in train_df['Ticker'].astype(int).values)]
-    y_test = test_df['Stock_Price']
-
-    x_train = preprocessing.normalize(train_df.drop(['Stock_Price', 'Ticker'], axis=1).to_numpy())
-    x_test = preprocessing.normalize(test_df.drop(['Stock_Price', 'Ticker'], axis=1).to_numpy())
-
-    # test_ticker_coll = test_df['Ticker']
-    #test_price_coll = test_df['Stock_Price']
-
-
-    # BayesianRidg(X_train, X_test, y_train, y_test)
-    # GradBoostRegr(X_train, X_test, y_train, y_test)
-    # CatBoost(X_train, X_test, y_train, y_test)
-    # XgBoost(X_train, X_test, y_train, y_test)
-    # random_forest(X_train, X_test, y_train, y_test)
-
-    all_models = []
+    df_initial = df_initial.fillna(-1)
+    df_initial.to_csv(f'{name}_collected', index=False, encoding='utf-8')
+    # df_initial = pd.read_csv('Auto_Tires_Trucks_collected.csv')
+    #
+    # df_initial = df_initial.fillna(-1)
+    # # print('Shape before', df_initial.shape)
+    #
+    # df = df_initial
+    # #df = df_initial.drop("Ticker", axis='columns')
+    #
+    # df_remove = remove_most_miss(df, miss_data_column_allowed, miss_data_row_allowed)
+    #
+    # Ticker_col = df_remove['Ticker']
+    # df_remove = df_remove.drop("Ticker", axis='columns')
     # try:
-
-        #all_models.append(NeuralNetTorch(x_train, y_train, x_test, y_test, num_of_epochs, lr))
-        #all_models.append(NeuralNetTorch(x_train, y_train, x_test, y_test))
-        # all_models.append(BayesianRidg(X, Y))
-        # all_models.append(GradBoostRegr(X, Y))
-        # all_models.append(XgBoost(X, Y))
-    all_models.append(random_forest(x_train, y_train, x_test, y_test, random_forest_dict))
-
-    answ = estimate_annualy_income_test(all_models, train_df, y_test, price_discount=price_discount, bear_inv=False)
-    #answ = estimate_annualy_income_test(all_models, train_df, y_test, test_ticker_coll, price_discount=0.8, bear_inv=False)
+    #     df = add_miss_values(df_remove)
     # except:
-    #     return -1
-    return answ
+    #     return -100
+    # corr_df = df_remove.corr()['Stock_Price'].abs().nlargest(n=nlarge)
+    #
+    # #disp_best_corr(corr_df, df_initial, df)
+    #
+    # df_final = df[corr_df.index]
+    #
+    # df_final = pd.concat([df_final, Ticker_col], axis=1)
+    #
+    # dataf = df_final.groupby(df_final['Ticker'].astype(int)).first()
+    #
+    # df_group = dataf[dataf['Ticker'].astype(str).str.endswith('1')]
+    #
+    # df_final = pd.concat([df_final, df_group]).drop_duplicates(keep=False)
+    #
+    # test_df = df_final.groupby(df_final['Ticker'].astype(int)).first()
+    #
+    # train_df = pd.concat([df_final, test_df]).drop_duplicates(keep=False)
+    #
+    #
+    # train_df = train_df.sort_values('Ticker')
+    #
+    # y_train = train_df['Stock_Price'].to_numpy()
+    # test_df = test_df[test_df['Ticker'].astype(int).apply(lambda x: x in train_df['Ticker'].astype(int).values)]
+    # y_test = test_df['Stock_Price']
+    #
+    # x_train = preprocessing.normalize(train_df.drop(['Stock_Price', 'Ticker'], axis=1).to_numpy())
+    # x_test = preprocessing.normalize(test_df.drop(['Stock_Price', 'Ticker'], axis=1).to_numpy())
+    #
+    # # test_ticker_coll = test_df['Ticker']
+    # #test_price_coll = test_df['Stock_Price']
+    #
+    #
+    # # BayesianRidg(X_train, X_test, y_train, y_test)
+    # # GradBoostRegr(X_train, X_test, y_train, y_test)
+    # # CatBoost(X_train, X_test, y_train, y_test)
+    # # XgBoost(X_train, X_test, y_train, y_test)
+    # # random_forest(X_train, X_test, y_train, y_test)
+    #
+    # all_models = []
+    # # try:
+    #
+    #     #all_models.append(NeuralNetTorch(x_train, y_train, x_test, y_test, num_of_epochs, lr))
+    #     #all_models.append(NeuralNetTorch(x_train, y_train, x_test, y_test))
+    #     # all_models.append(BayesianRidg(X, Y))
+    #     # all_models.append(GradBoostRegr(X, Y))
+    # all_models.append(XgBoost(x_train, y_train, x_test, y_test, XGBoost_Params))
+    # #all_models.append(random_forest(x_train, y_train, x_test, y_test, random_forest_dict))
+    #
+    # answ = estimate_annualy_income_test(all_models, train_df, y_test, price_discount=price_discount, bear_inv=False)
+    # #answ = estimate_annualy_income_test(all_models, train_df, y_test, test_ticker_coll, price_discount=0.8, bear_inv=False)
+    # # except:
+    # #     return -1
+    # return answ
 
 
     #TODO Создать визуализицию прибыли каждой модели !! + Проверить где больше успех моделей на рынке быков или медведей? + Проверит зависимость качества к количество features И процента жажды выгоды к actual income !!!
@@ -251,21 +260,25 @@ def main():
     df = pd.DataFrame()
     total = 0
 
-    # for ticker_count, i in tqdm(enumerate(pd.read_csv(fr'C:\Program\Neural_Network\Market_Ratios_Model\Full_list.csv', encoding='utf-8').values)):
-    #     answ = data(i[0], ticker_count)
-    #     if answ is not 0:
-    #         df = pd.concat([df, answ])
-    #     else:
-    #         total += 1
-    # print('total erors', total)
+    all_filters_system = ['Auto_Tires_Trucks', 'Basic_Materials', 'Computer_and_Technology', 'Construction', 'Consumer_Discretionary', 'Consumer_Staples', 'Finance', 'Industrial_Products', 'Medical_Multi-Sector_Conglomerates', 'Oils_Energy', 'Retail_Wholesale', 'Transportation', 'Unclassified', 'Utilities']
 
-    # preprocess(df_initial=df, nlarge=110, miss_data_column_allowed=0.46, miss_data_row_allowed=0.07)
+    for model in all_filters_system:
+        for ticker_count, i in tqdm(enumerate(pd.read_csv(fr'C:\Program\Neural_Network\Market_Ratios_Model\{model}.csv', encoding='utf-8').values)):
+            answ = data(i[0], ticker_count)
+            if answ is not 0:
+                df = pd.concat([df, answ])
+            else:
+                total += 1
+        print('total erors', total)
 
-    opt_st = optuna.create_study(study_name='NeurNet',
-                                 direction='maximize')
-    opt_st.optimize(preprocess, n_trials=130, n_jobs=3)
+        preprocess(df_initial=df, nlarge=110, miss_data_column_allowed=0.46, miss_data_row_allowed=0.07, name=model)
 
-    optuna.visualization.plot_param_importances(opt_st, target_name="f1_score")
+    # opt_st = optuna.create_study(study_name='NeurNet',
+    #                              direction='maximize')
+    # opt_st.optimize(preprocess, n_trials=1120, n_jobs=1)
+    # fig = optuna.visualization.matplotlib.plot_param_importances(opt_st, target_name="f1_score")
+    # fig_2 = optuna.visualization.matplotlib.plot_optimization_history(opt_st)
+    # plt.show()
 
 if __name__ == '__main__':
     main()

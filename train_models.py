@@ -37,28 +37,20 @@ def GradBoostRegr(X_train, y_train):
     print('\n\n')
     return reg_model
 
-def XgBoost(X_train, y_train):
+def XgBoost(X_train, y_train, X_test, y_test, dict):
 
     # TODO Add and Tune the params!
 
-    reg_model = xgb.XGBRegressor()
+    reg_model = xgb.XGBRegressor(**dict)
     reg_model.fit(X_train, y_train)
-    print('train_score - XgBoost', reg_model.score(X_train, y_train))
-    #print('test_score - XgBoost', reg.score(X_test, y_test))
-    print('test_mean_abs_perc_error - XgBoost', mean_absolute_percentage_error(reg_model.predict(X_train), y_train))
+    print('test_mean_abs_perc_error - XgBoost', mean_absolute_percentage_error(reg_model.predict(X_test), y_test))
     print('\n\n')
     return reg_model
 
 
 def random_forest(X_train, y_train, X_test, y_test, dict):
 
-    reg_model = RandomForestRegressor(bootstrap=dict['bootstrap'],
-                                      max_depth=dict['max_depth'],
-                                      max_features=dict['max_features'],
-                                      min_samples_leaf=dict['min_samples_leaf'],
-                                      min_samples_split=dict['min_samples_split'],
-                                      n_estimators=dict['n_estimators'],
-                                      random_state=0)
+    reg_model = RandomForestRegressor(**dict)
 
     reg_model.fit(X_train, y_train.ravel())
 

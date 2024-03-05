@@ -134,18 +134,18 @@ def estimate_annualy_income_test(models, train_df, y_test, price_discount, bear_
 
         print('Percent', total_income_percent)
         print('len_total_invest', len(total_income_percent))
-        print('good invest', sum([1 if i > 1.25 else 0 for i in total_income_percent]))
+        print('good invest', sum([1 if i > 1.2 else 0 for i in total_income_percent]))
         try:
             estim = total_income/total_invested
         except:
             estim = 0
         print('Income ratio', estim)
 
-        print('sum([1 if i > 1.25 else -2 for i in total_income_percent])', sum([1 if i > 1.25 else -2 for i in total_income_percent]))
+        print('sum([1 if i > 1.2 else -2 for i in total_income_percent])', sum([1 if i > 1.2 else -2 for i in total_income_percent]))
         # print('ind', ind)
 
         # axs[ind].plot(np.linspace(0, 1, len(total_income_values)), total_income_values)
 
     # plt.show()
 
-    return sum([1 if i > 1.25 else -2 for i in total_income_percent])
+    return sum([1 if i > 1.2 else -2 for i in total_income_percent])
