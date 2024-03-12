@@ -1,14 +1,6 @@
-import yfinance as yf
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.linear_model import LinearRegression
 import numpy as np
 from sklearn import preprocessing
-import optuna
-from scipy import stats
-from datetime import date
-from warnings import simplefilter
 from train_models import *
 from estimate_func import estimate_annualy_income_test
 
@@ -27,7 +19,6 @@ def add_miss_values(df):
                 miss_data = int(regr.predict(np.array([X_val]).reshape(-1,1))[0][0])
             column.append(miss_data)
         df[col_name] = column
-    #print('Final Shape', df.shape)
     return df
 
 def remove_most_miss(df, miss_data_column_allowed, miss_data_row_allowed):
