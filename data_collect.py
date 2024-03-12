@@ -93,8 +93,7 @@ def main():
         data = data.set_axis([filter], axis=1)
 
         # Save the current data to a file with the correct name
-        #data.to_csv(f'{all_filters_system[filter_index]}.csv', index=False, encoding='utf-8')
-        print(data)
+        data.to_csv(rf'All_lists\{all_filters_system[filter_index]}.csv', index=False, encoding='utf-8')
 
 
 if __name__ == '__main__':
