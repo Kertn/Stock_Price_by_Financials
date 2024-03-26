@@ -12,7 +12,9 @@ import xgboost as xgb
 import pandas as pd
 
 def estimate_func(X, Y):
-    return round(mean([x / y if x > y else y / x for x, y in zip(X, Y)]), 3)
+    if round(mean([abs(x / y) if x > y else abs(y / x) for x, y in zip(X, Y)]), 3) < 0:
+        return 100
+    return round(mean([abs(x / y) if x > y else abs(y / x) for x, y in zip(X, Y)]), 3)
 
 
 def BayesianRidg_func(optuna, X_train, y_train, X_test, y_test, train, best_params):
@@ -26,17 +28,16 @@ def BayesianRidg_func(optuna, X_train, y_train, X_test, y_test, train, best_para
         }
     else:
         BayesianRidge_Params = {
-            "max_iter": best_params,
-            "alpha_1": best_params,
-            "alpha_2": best_params,
-            "lambda_1": best_params,
-            "lambda_2": best_params,
+            "max_iter": best_params['max_iter'],
+            "alpha_1": best_params['alpha_1'],
+            "alpha_2": best_params['alpha_2'],
+            "lambda_1": best_params['lambda_1'],
+            "lambda_2": best_params['lambda_2'],
         }
 
     reg_model = linear_model.BayesianRidge(**BayesianRidge_Params)
     reg_model.fit(X_train, y_train.ravel())
     result = estimate_func(reg_model.predict(X_test), y_test)
-    print('estimate_func - BayesianRidg', result)
 
     return reg_model, result
 
@@ -47,26 +48,26 @@ def ElasticNet_func(optuna, X_train, y_train, X_test, y_test, train, best_params
              "l1_ratio" : optuna.suggest_float("l1_ratio", 0, 1),
              "fit_intercept" : optuna.suggest_categorical("fit_intercept", [True, False]),
              "precompute" : optuna.suggest_categorical("precompute", [True, False]),
-             "max_iter" : optuna.suggest_int("max_iter", 200, 3000, 200),
+             "max_iter" : optuna.suggest_int("max_iter", 200, 5000, 200),
              "tol" : optuna.suggest_float("tol", 1e-4, 1e-2),
              "selection" : optuna.suggest_categorical("selection", ["cyclic", "random"]),
         }
     else:
         ElasticNet_Params = {
-            "alpha": best_params,
-            "l1_ratio": best_params,
-            "fit_intercept": best_params,
-            "precompute": best_params,
-            "max_iter": best_params,
-            "tol": best_params,
-            "selection": best_params
+            "alpha": best_params['alpha'],
+            "l1_ratio": best_params['l1_ratio'],
+            "fit_intercept": best_params['fit_intercept'],
+            "precompute": best_params['precompute'],
+            "max_iter": best_params['max_iter'],
+            "tol": best_params['tol'],
+            "selection": best_params['selection']
         }
 
     reg_model = ElasticNet(random_state=0, **ElasticNet_Params)
     reg_model.fit(X_train, y_train)
-    print('estimate_func - ElasticNet_func', estimate_func(reg_model.predict(X_test), y_test))
+    result = estimate_func(reg_model.predict(X_test), y_test)
 
-    return reg_model
+    return reg_model, result
 
 def random_forest_func(optuna, X_train, y_train, X_test, y_test, train, best_params):
     if train:
@@ -77,25 +78,25 @@ def random_forest_func(optuna, X_train, y_train, X_test, y_test, train, best_par
                               'min_samples_split': optuna.suggest_int('min_samples_split', 2, 16, 2),
                               'n_estimators': optuna.suggest_int('n_estimators', 200, 7600, 200)}
     else:
-        random_forest_Params = {'bootstrap': best_params,
-                                'max_depth': best_params,
-                                'max_features': best_params,
-                                'min_samples_leaf': best_params,
-                                'min_samples_split': best_params,
-                                'n_estimators': best_params}
+        random_forest_Params = {'bootstrap': best_params['bootstrap'],
+                                'max_depth': best_params['max_depth'],
+                                'max_features': best_params['max_features'],
+                                'min_samples_leaf': best_params['min_samples_leaf'],
+                                'min_samples_split': best_params['min_samples_split'],
+                                'n_estimators': best_params['n_estimators']}
 
     reg_model = RandomForestRegressor(random_state=0, **random_forest_Params)
     reg_model.fit(X_train, y_train.ravel())
-    print('estimate_func - random_forest', estimate_func(reg_model.predict(X_test), y_test))
+    result = estimate_func(reg_model.predict(X_test), y_test)
 
-    return reg_model
+    return reg_model, result
 
 def XgBoost_func(optuna, X_train, y_train, X_test, y_test, train, best_params):
     if train:
         XGBoost_Params = {
             "objective": "reg:squarederror",
             "eval_metric" : "mape",
-            "n_estimators": optuna.suggest_int("n_estimators", 100, 4000, 100),
+            "n_estimators": optuna.suggest_int("n_estimators", 100, 3000, 100),
             "verbosity": 0,
             "learning_rate": optuna.suggest_float("learning_rate", 1e-3, 0.1),
             "scale_pos_weight":optuna.suggest_int("scale_pos_weight", 1, 6),
@@ -106,23 +107,23 @@ def XgBoost_func(optuna, X_train, y_train, X_test, y_test, train, best_params):
         }
     else:
         XGBoost_Params = {
-            "objective": best_params,
-            "eval_metric": best_params,
-            "n_estimators": best_params,
-            "verbosity": best_params,
-            "learning_rate": best_params,
-            "scale_pos_weight": best_params,
-            "max_depth": best_params,
-            "subsample": best_params,
-            "colsample_bytree": best_params,
-            "min_child_weight": best_params,
+            "objective": "reg:squarederror",
+            "eval_metric": "mape",
+            "n_estimators": best_params['n_estimators'],
+            "verbosity": 0,
+            "learning_rate": best_params['learning_rate'],
+            "scale_pos_weight": best_params['scale_pos_weight'],
+            "max_depth": best_params['max_depth'],
+            "subsample": best_params['subsample'],
+            "colsample_bytree": best_params['colsample_bytree'],
+            "min_child_weight": best_params['min_child_weight'],
         }
 
     reg_model = xgb.XGBRegressor(random_state=0, **XGBoost_Params)
     reg_model.fit(X_train, y_train)
-    print('estimate_func - XgBoost', estimate_func(reg_model.predict(X_test), y_test))
+    result = estimate_func(reg_model.predict(X_test), y_test)
 
-    return reg_model
+    return reg_model, result
 
 def GradBoostRegr_func(optuna, X_train, y_train, X_test, y_test, train, best_params):
     if train:
@@ -138,21 +139,21 @@ def GradBoostRegr_func(optuna, X_train, y_train, X_test, y_test, train, best_par
             "subsample": optuna.suggest_float("subsample", 0.05, 1.0)}
     else:
         GradBoost_Params = {
-            "loss": best_params,
-            "criterion": best_params,
-            "min_samples_split": best_params,
-            "min_samples_leaf": best_params,
-            "alpha": best_params,
-            "n_estimators": best_params,
-            "learning_rate": best_params,
-            "max_depth": best_params,
-            "subsample": best_params}
+            "loss": best_params['loss'],
+            "criterion": best_params['criterion'],
+            "min_samples_split": best_params['min_samples_split'],
+            "min_samples_leaf": best_params['min_samples_leaf'],
+            "alpha": best_params['alpha'],
+            "n_estimators": best_params['n_estimators'],
+            "learning_rate": best_params['learning_rate'],
+            "max_depth": best_params['max_depth'],
+            "subsample": best_params['subsample']}
 
     reg_model = GradientBoostingRegressor(random_state=0, **GradBoost_Params)
     reg_model.fit(X_train, y_train.ravel())
-    print('estimate_func - GradBoostRegr', estimate_func(reg_model.predict(X_test), y_test))
+    result = estimate_func(reg_model.predict(X_test), y_test)
 
-    return reg_model
+    return reg_model, result
 
 def CatBoostRegr_func(optuna, X_train, y_train, X_test, y_test, train, best_params):
     if train:
@@ -166,27 +167,27 @@ def CatBoostRegr_func(optuna, X_train, y_train, X_test, y_test, train, best_para
             }
     else:
         CatBoost_Params = {
-                "silent": best_params,
-                "eval_metric": best_params,
-                "n_estimators": best_params,
-                "learning_rate": best_params,
-                "max_depth": best_params,
-                "subsample": best_params,
+                "silent": True,
+                "eval_metric": "MAPE",
+                "n_estimators": best_params['n_estimators'],
+                "learning_rate": best_params['learning_rate'],
+                "max_depth": best_params['max_depth'],
+                "subsample": best_params['subsample'],
             }
 
     reg_model = CatBoostRegressor(random_state=0, **CatBoost_Params)
     reg_model.fit(X_train, y_train)
-    print('estimate_func - CatBoost', estimate_func(reg_model.predict(X_test), y_test))
+    result = estimate_func(reg_model.predict(X_test), y_test)
 
-    return reg_model
+    return reg_model, result
 
 def NeuralNetTorch_func(optuna, X_train, y_train, X_test, y_test, train, best_params):
     if train:
         num_of_epochs = optuna.suggest_int('num_of_epochs', 5000, 80000, 5000)
         lr = optuna.suggest_float('lr', 0.001, 0.1, step=0.001)
     else:
-        num_of_epochs = best_params
-        lr = best_params
+        num_of_epochs = best_params['num_of_epochs']
+        lr = best_params['lr']
 
     class linearRegression(nn.Module):
         def __init__(self, input_dim):
@@ -234,6 +235,6 @@ def NeuralNetTorch_func(optuna, X_train, y_train, X_test, y_test, train, best_pa
         optimizers.step()
 
     with torch.no_grad():
-        print('test_mean_abs_perc_error - linearRegression', estimate_func(reg_model.forward(X_test), y_test))
+        result = estimate_func(reg_model.forward(X_test).numpy().flatten(), y_test.numpy().flatten())
 
-    return reg_model
+    return reg_model, result

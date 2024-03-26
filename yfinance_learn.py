@@ -12,6 +12,7 @@ from scipy import stats
 from datetime import date
 from warnings import simplefilter
 from train_models import *
+from Optuna_search import Optuna_Optim, Invest
 from estimate_func import estimate_annualy_income_test
 
 def drop_incorrect_column(df, ticker):
@@ -83,21 +84,22 @@ def main():
     pd.options.mode.chained_assignment = None
     simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
-    all_filters_system = ['Aerospace', 'Auto_Tires_Trucks', 'Basic_Materials', 'Business_Services', 'Computer_and_Technology', 'Construction', 'Consumer_Discretionary', 'Consumer_Staples', 'Finance', 'Industrial_Products', 'Medical_Multi-Sector_Conglomerates', 'Oils_Energy', 'Retail_Wholesale', 'Transportation', 'Unclassified', 'Utilities', 'Full_list']
-
-    for name in all_filters_system:
-        df = pd.DataFrame()
-        total = 0
-        for ticker_count, i in tqdm(enumerate(pd.read_csv(fr'C:\Program\Neural_Network\Market_Ratios_Model\All_lists\{name}.csv', encoding='utf-8').values)):
-            answ = data(i[0], ticker_count)
-            if answ is not 0:
-                df = pd.concat([df, answ])
-            else:
-                total += 1
-        print('total erors', total)
-        df = df.fillna(-1)
-        df.to_csv(fr'C:\Program\Neural_Network\Market_Ratios_Model\All_lists_collected\{name}_collected.csv', index=False)
-
+    # all_filters_system = ['Aerospace', 'Auto_Tires_Trucks', 'Basic_Materials', 'Business_Services', 'Computer_and_Technology', 'Construction', 'Consumer_Discretionary', 'Consumer_Staples', 'Finance', 'Industrial_Products', 'Medical_Multi-Sector_Conglomerates', 'Oils_Energy', 'Retail_Wholesale', 'Transportation', 'Unclassified', 'Utilities', 'Full_list']
+    #
+    # for name in all_filters_system:
+    #     df = pd.DataFrame()
+    #     total = 0
+    #     for ticker_count, i in tqdm(enumerate(pd.read_csv(fr'C:\Program\Neural_Network\Market_Ratios_Model\All_lists\{name}.csv', encoding='utf-8').values)):
+    #         answ = data(i[0], ticker_count)
+    #         if answ is not 0:
+    #             df = pd.concat([df, answ])
+    #         else:
+    #             total += 1
+    #     print('total erors', total)
+    #     df = df.fillna(-1)
+    #     df.to_csv(fr'C:\Program\Neural_Network\Market_Ratios_Model\All_lists_collected\{name}_collected.csv', index=False)
+    Optuna_Optim()
+    #Invest()
 
 if __name__ == '__main__':
     main()

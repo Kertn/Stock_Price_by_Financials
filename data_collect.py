@@ -6,6 +6,7 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
 
+
 # Parse tickers from the site
 def parse(driver):
     companies_list = []
