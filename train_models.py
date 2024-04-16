@@ -9,7 +9,6 @@ from sklearn.linear_model import ElasticNet
 from sklearn import linear_model
 from tqdm import tqdm
 import xgboost as xgb
-import pandas as pd
 
 def estimate_func(X, Y):
     if round(mean([abs(x / y) if x > y else abs(y / x) for x, y in zip(X, Y)]), 3) < 0:

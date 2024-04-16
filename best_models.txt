@@ -20,7 +20,11 @@ Auto_Tires_Trucks - <function random_forest_func at 0x000001B8765D2430> - {'miss
 
 Auto_Tires_Trucks - <function XgBoost_func at 0x000001B8765D24C0> - {'miss_data_column_allowed': 0.78, 'miss_data_row_allowed': 0.34, 'nlarge': 65, 'n_estimators': 1100, 'learning_rate': 0.05227733048564829, 'scale_pos_weight': 3, 'max_depth': 6, 'subsample': 0.9498875215910463, 'colsample_bytree': 0.7737945288107694, 'min_child_weight': 1} - {'bear_inv': True, 'price_discount': 0.27} 
 
-Auto_Tires_Trucks - <function GradBoostRegr_func at 0x000001B8765D2550> - {'miss_data_column_allowed': 0.74, 'miss_data_row_allowed': 0.51, 'nlarge': 90, 'loss': 'quantile', 'criterion': 'squared_error', 'min_samples_split': 4, 'min_samples_leaf': 6, 'alpha': 0.15227272553898974, 'n_estimators': 1490, 'learning_rate': 0.17178038065780085, 'max_depth': 3, 'subsample': 0.9124259734212564} - {'bear_inv': False, 'price_discount': 0.35000000000000003} 
+Auto_Tires_Trucks - <function GradBoostRegr_func at 0x000001B8765D2550> - {'miss_data_column_allowed': 0.74, 'miss_data_row_allowed': 0.51, 'nlarge': 90, 'loss': 'quantile', 'criterion': 'squared_error', 'min_samples_split': 4, 'min_samples_leaf': 6, 'alpha': 0.15227272553898974, 'n_estimators': 1490, 'learning_rate': 0.17178038065780085, 'max_depth': 3, 'subsample': 0.9124259734212564} - {'bear_inv': False, 'price_discount': 0.35000000000000003}
+
+Auto_Tires_Trucks - <function CatBoostRegr_func at 0x000001758ED1E5E0> - {'miss_data_column_allowed': 0.74, 'miss_data_row_allowed': 0.2, 'nlarge': 45, 'n_estimators': 800, 'learning_rate': 0.08908626197918582, 'max_depth': 6, 'subsample': 0.2775978030661559} - {'bear_inv': False, 'price_discount': 0.27} 
+
+Auto_Tires_Trucks - <function NeuralNetTorch_func at 0x000001758ED1E670> - {'miss_data_column_allowed': 0.72, 'miss_data_row_allowed': 0.2, 'nlarge': 20, 'num_of_epochs': 80000, 'lr': 0.052000000000000005} - {'bear_inv': False, 'price_discount': 0.81} 
 
 Basic_Materials - <function BayesianRidg_func at 0x000001D9ED3A0160> - {'miss_data_column_allowed': 0.67, 'miss_data_row_allowed': 0.53, 'nlarge': 65, 'max_iter': 375, 'alpha_1': 6.369778669107771e-06, 'alpha_2': 6.365700974565339e-06, 'lambda_1': 7.0000936535481776e-06, 'lambda_2': 7.676643985782261e-06} - {'bear_inv': False, 'price_discount': 0.08} 
 
@@ -60,7 +64,9 @@ Computer_and_Technology - <function XgBoost_func at 0x0000021A93C724C0> - {'miss
 
 Computer_and_Technology - <function GradBoostRegr_func at 0x0000021A93C72550> - {'miss_data_column_allowed': 0.72, 'miss_data_row_allowed': 0.69, 'nlarge': 70, 'loss': 'quantile', 'criterion': 'friedman_mse', 'min_samples_split': 4, 'min_samples_leaf': 6, 'alpha': 0.26394709791473125, 'n_estimators': 940, 'learning_rate': 0.016610899443920205, 'max_depth': 13, 'subsample': 0.6312662073864576} - {'bear_inv': False, 'price_discount': 0.53} 
 
-Computer_and_Technology - <function CatBoostRegr_func at 0x0000021A93C725E0> - {'miss_data_column_allowed': 0.77, 'miss_data_row_allowed': 0.27, 'nlarge': 70, 'n_estimators': 3800, 'learning_rate': 0.01858862538166762, 'max_depth': 7, 'subsample': 0.8235207624742671} - {'bear_inv': True, 'price_discount': 0.88} 
+Computer_and_Technology - <function CatBoostRegr_func at 0x0000021A93C725E0> - {'miss_data_column_allowed': 0.77, 'miss_data_row_allowed': 0.27, 'nlarge': 70, 'n_estimators': 3800, 'learning_rate': 0.01858862538166762, 'max_depth': 7, 'subsample': 0.8235207624742671} - {'bear_inv': True, 'price_discount': 0.88}
+
+Computer_and_Technology - <function NeuralNetTorch_func at 0x0000015CE178E670> - {'miss_data_column_allowed': 0.73, 'miss_data_row_allowed': 0.25, 'nlarge': 110, 'num_of_epochs': 30000, 'lr': 0.042} - {'bear_inv': False, 'price_discount': 0.42000000000000004} 
 
 Construction - <function BayesianRidg_func at 0x000001B9DC39F160> - {'miss_data_column_allowed': 0.79, 'miss_data_row_allowed': 0.2, 'nlarge': 120, 'max_iter': 325, 'alpha_1': 3.948181216847662e-06, 'alpha_2': 1.531858982879807e-06, 'lambda_1': 8.349480717564516e-06, 'lambda_2': 2.5350375335063728e-06} - {'bear_inv': True, 'price_discount': 0.32} 
 
@@ -82,7 +88,13 @@ Consumer_Discretionary - <function ElasticNet_func at 0x000001B9DC83F3A0> - {'mi
 
 Consumer_Discretionary - <function random_forest_func at 0x000001B9DC83F430> - {'miss_data_column_allowed': 0.78, 'miss_data_row_allowed': 0.32, 'nlarge': 20, 'bootstrap': False, 'max_depth': 170, 'max_features': 'log2', 'min_samples_leaf': 4, 'min_samples_split': 2, 'n_estimators': 200} - {'bear_inv': False, 'price_discount': 0.51} 
 
-Consumer_Discretionary - <function XgBoost_func at 0x000001B9DC83F4C0> - {'miss_data_column_allowed': 0.71, 'miss_data_row_allowed': 0.25, 'nlarge': 55, 'n_estimators': 1300, 'learning_rate': 0.09151066098991198, 'scale_pos_weight': 2, 'max_depth': 6, 'subsample': 0.5081851083700326, 'colsample_bytree': 0.769737535360893, 'min_child_weight': 1} - {'bear_inv': False, 'price_discount': 0.19} 
+Consumer_Discretionary - <function XgBoost_func at 0x000001B9DC83F4C0> - {'miss_data_column_allowed': 0.71, 'miss_data_row_allowed': 0.25, 'nlarge': 55, 'n_estimators': 1300, 'learning_rate': 0.09151066098991198, 'scale_pos_weight': 2, 'max_depth': 6, 'subsample': 0.5081851083700326, 'colsample_bytree': 0.769737535360893, 'min_child_weight': 1} - {'bear_inv': False, 'price_discount': 0.19}
+
+Consumer_Discretionary - <function GradBoostRegr_func at 0x000001AA5CCA3550> - {'miss_data_column_allowed': 0.8, 'miss_data_row_allowed': 0.43000000000000005, 'nlarge': 120, 'loss': 'huber', 'criterion': 'squared_error', 'min_samples_split': 7, 'min_samples_leaf': 4, 'alpha': 0.4212548069896898, 'n_estimators': 1350, 'learning_rate': 0.0780683612838915, 'max_depth': 9, 'subsample': 0.2375117185703} - {'bear_inv': True, 'price_discount': 0.99} 
+
+Consumer_Discretionary - <function CatBoostRegr_func at 0x000001AA5CCA35E0> - {'miss_data_column_allowed': 0.78, 'miss_data_row_allowed': 0.33, 'nlarge': 15, 'n_estimators': 1900, 'learning_rate': 0.04574537083949809, 'max_depth': 9, 'subsample': 0.3640578860079395} - {'bear_inv': False, 'price_discount': 0.91} 
+
+Consumer_Discretionary - <function NeuralNetTorch_func at 0x000001AA5CCA3670> - {'miss_data_column_allowed': 0.75, 'miss_data_row_allowed': 0.2, 'nlarge': 70, 'num_of_epochs': 60000, 'lr': 0.052000000000000005} - {'bear_inv': False, 'price_discount': 0.12} 
 
 Consumer_Staples - <function BayesianRidg_func at 0x00000220C0DD0160> - {'miss_data_column_allowed': 0.8, 'miss_data_row_allowed': 0.2, 'nlarge': 120, 'max_iter': 425, 'alpha_1': 5.328702053894711e-06, 'alpha_2': 6.991415818731588e-07, 'lambda_1': 3.5574677362028975e-06, 'lambda_2': 1.165373003301429e-07} - {'bear_inv': True, 'price_discount': 0.11} 
 
@@ -96,13 +108,21 @@ Consumer_Staples - <function GradBoostRegr_func at 0x00000220C1343550> - {'miss_
 
 Consumer_Staples - <function CatBoostRegr_func at 0x00000220C13435E0> - {'miss_data_column_allowed': 0.76, 'miss_data_row_allowed': 0.22, 'nlarge': 45, 'n_estimators': 2500, 'learning_rate': 0.029892413330501078, 'max_depth': 4, 'subsample': 0.7619920971544352} - {'bear_inv': False, 'price_discount': 0.3} 
 
+Consumer_Staples - <function NeuralNetTorch_func at 0x0000015CE178E670> - {'miss_data_column_allowed': 0.8, 'miss_data_row_allowed': 0.21000000000000002, 'nlarge': 70, 'num_of_epochs': 10000, 'lr': 0.04} - {'bear_inv': False, 'price_discount': 0.97}
+
 Finance - <function BayesianRidg_func at 0x00000272E59FF160> - {'miss_data_column_allowed': 0.78, 'miss_data_row_allowed': 0.72, 'nlarge': 30, 'max_iter': 50, 'alpha_1': 4.92299848806606e-06, 'alpha_2': 9.173946618501182e-06, 'lambda_1': 4.816949113583736e-06, 'lambda_2': 5.6286065767050625e-06} - {'bear_inv': True, 'price_discount': 0.09999999999999999} 
 
 Finance - <function ElasticNet_func at 0x00000272E5F8E3A0> - {'miss_data_column_allowed': 0.65, 'miss_data_row_allowed': 0.24000000000000002, 'nlarge': 105, 'alpha': 0.8413816358348827, 'l1_ratio': 0.6831441772330179, 'fit_intercept': False, 'precompute': True, 'max_iter': 4000, 'tol': 0.009962199757190046, 'selection': 'random'} - {'bear_inv': True, 'price_discount': 0.18000000000000002} 
 
 Finance - <function random_forest_func at 0x00000272E5F8E430> - {'miss_data_column_allowed': 0.79, 'miss_data_row_allowed': 0.76, 'nlarge': 50, 'bootstrap': False, 'max_depth': 170, 'max_features': 'sqrt', 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 5400} - {'bear_inv': True, 'price_discount': 0.03} 
 
-Finance - <function XgBoost_func at 0x00000272E5F8E4C0> - {'miss_data_column_allowed': 0.73, 'miss_data_row_allowed': 0.5900000000000001, 'nlarge': 110, 'n_estimators': 2100, 'learning_rate': 0.04350925433665421, 'scale_pos_weight': 5, 'max_depth': 9, 'subsample': 0.6431813037566778, 'colsample_bytree': 0.5961452188276948, 'min_child_weight': 1} - {'bear_inv': True, 'price_discount': 0.33} 
+Finance - <function XgBoost_func at 0x00000272E5F8E4C0> - {'miss_data_column_allowed': 0.73, 'miss_data_row_allowed': 0.5900000000000001, 'nlarge': 110, 'n_estimators': 2100, 'learning_rate': 0.04350925433665421, 'scale_pos_weight': 5, 'max_depth': 9, 'subsample': 0.6431813037566778, 'colsample_bytree': 0.5961452188276948, 'min_child_weight': 1} - {'bear_inv': True, 'price_discount': 0.33}
+
+Finance - <function GradBoostRegr_func at 0x000001E1295EF550> - {'miss_data_column_allowed': 0.77, 'miss_data_row_allowed': 0.7, 'nlarge': 115, 'loss': 'huber', 'criterion': 'squared_error', 'min_samples_split': 6, 'min_samples_leaf': 5, 'alpha': 0.7767083304304833, 'n_estimators': 390, 'learning_rate': 0.013276306407646956, 'max_depth': 11, 'subsample': 0.7595010529541397} - {'bear_inv': True, 'price_discount': 0.75} 
+
+Finance - <function CatBoostRegr_func at 0x000001E10DB645E0> - {'miss_data_column_allowed': 0.78, 'miss_data_row_allowed': 0.56, 'nlarge': 45, 'n_estimators': 2400, 'learning_rate': 0.022705924731738308, 'max_depth': 11, 'subsample': 0.7143160034477221} - {'bear_inv': True, 'price_discount': 0.63} 
+
+Finance - <function NeuralNetTorch_func at 0x000001E10DB64670> - {'miss_data_column_allowed': 0.8, 'miss_data_row_allowed': 0.43000000000000005, 'nlarge': 120, 'num_of_epochs': 10000, 'lr': 0.04} - {'bear_inv': True, 'price_discount': 0.55}
 
 Industrial_Products - <function BayesianRidg_func at 0x000001C60832F160> - {'miss_data_column_allowed': 0.77, 'miss_data_row_allowed': 0.22, 'nlarge': 100, 'max_iter': 150, 'alpha_1': 2.9434668496838302e-06, 'alpha_2': 9.148697707916537e-06, 'lambda_1': 2.557172853705433e-06, 'lambda_2': 3.958078183872405e-06} - {'bear_inv': False, 'price_discount': 0.14} 
 
@@ -124,7 +144,13 @@ Medical_Multi-Sector_Conglomerates - <function ElasticNet_func at 0x000001FEEFC1
 
 Medical_Multi-Sector_Conglomerates - <function random_forest_func at 0x000001FEEFC1E430> - {'miss_data_column_allowed': 0.79, 'miss_data_row_allowed': 0.25, 'nlarge': 15, 'bootstrap': False, 'max_depth': 20, 'max_features': 'sqrt', 'min_samples_leaf': 4, 'min_samples_split': 8, 'n_estimators': 400} - {'bear_inv': True, 'price_discount': 0.23} 
 
-Medical_Multi-Sector_Conglomerates - <function XgBoost_func at 0x000001FEEFC1E4C0> - {'miss_data_column_allowed': 0.8, 'miss_data_row_allowed': 0.24000000000000002, 'nlarge': 120, 'n_estimators': 1000, 'learning_rate': 0.025404938731719694, 'scale_pos_weight': 3, 'max_depth': 11, 'subsample': 0.9839546990334547, 'colsample_bytree': 0.7621154506809952, 'min_child_weight': 2} - {'bear_inv': True, 'price_discount': 0.97} 
+Medical_Multi-Sector_Conglomerates - <function XgBoost_func at 0x000001FEEFC1E4C0> - {'miss_data_column_allowed': 0.8, 'miss_data_row_allowed': 0.24000000000000002, 'nlarge': 120, 'n_estimators': 1000, 'learning_rate': 0.025404938731719694, 'scale_pos_weight': 3, 'max_depth': 11, 'subsample': 0.9839546990334547, 'colsample_bytree': 0.7621154506809952, 'min_child_weight': 2} - {'bear_inv': True, 'price_discount': 0.97}
+
+Medical_Multi-Sector_Conglomerates - <function GradBoostRegr_func at 0x000001B537DF4550> - {'miss_data_column_allowed': 0.21000000000000002, 'miss_data_row_allowed': 0.72, 'nlarge': 50, 'loss': 'quantile', 'criterion': 'friedman_mse', 'min_samples_split': 4, 'min_samples_leaf': 6, 'alpha': 0.12851015988746373, 'n_estimators': 1120, 'learning_rate': 0.05273792887031975, 'max_depth': 8, 'subsample': 0.8713071989058494} - {'bear_inv': False, 'price_discount': 0.21000000000000002} 
+
+Medical_Multi-Sector_Conglomerates - <function CatBoostRegr_func at 0x000001B537DF45E0> - {'miss_data_column_allowed': 0.8, 'miss_data_row_allowed': 0.76, 'nlarge': 10, 'n_estimators': 3500, 'learning_rate': 0.04151092764263734, 'max_depth': 10, 'subsample': 0.3812811229635196} - {'bear_inv': False, 'price_discount': 0.88} 
+
+Medical_Multi-Sector_Conglomerates - <function NeuralNetTorch_func at 0x000001B537DF4670> - {'miss_data_column_allowed': 0.8, 'miss_data_row_allowed': 0.21000000000000002, 'nlarge': 85, 'num_of_epochs': 35000, 'lr': 0.030000000000000002} - {'bear_inv': True, 'price_discount': 0.77} 
 
 Oils_Energy - <function BayesianRidg_func at 0x000001AAA37CE160> - {'miss_data_column_allowed': 0.76, 'miss_data_row_allowed': 0.6000000000000001, 'nlarge': 25, 'max_iter': 150, 'alpha_1': 2.8131355683527054e-06, 'alpha_2': 8.98743008422085e-06, 'lambda_1': 2.341681209142028e-06, 'lambda_2': 6.069120326090383e-06} - {'bear_inv': False, 'price_discount': 0.09} 
 
@@ -164,6 +190,10 @@ Transportation - <function XgBoost_func at 0x000001AAA3D534C0> - {'miss_data_col
 
 Transportation - <function GradBoostRegr_func at 0x000001AAA3D53550> - {'miss_data_column_allowed': 0.8, 'miss_data_row_allowed': 0.28, 'nlarge': 70, 'loss': 'squared_error', 'criterion': 'squared_error', 'min_samples_split': 4, 'min_samples_leaf': 5, 'alpha': 0.7430279076518236, 'n_estimators': 1350, 'learning_rate': 0.16417140275293116, 'max_depth': 7, 'subsample': 0.9921156474976909} - {'bear_inv': True, 'price_discount': 0.7100000000000001} 
 
+Transportation - <function CatBoostRegr_func at 0x000001758ED1E5E0> - {'miss_data_column_allowed': 0.77, 'miss_data_row_allowed': 0.6000000000000001, 'nlarge': 70, 'n_estimators': 1800, 'learning_rate': 0.04207554327002144, 'max_depth': 3, 'subsample': 0.43697596527561694} - {'bear_inv': False, 'price_discount': 0.54} 
+
+Transportation - <function NeuralNetTorch_func at 0x000001758ED1E670> - {'miss_data_column_allowed': 0.8, 'miss_data_row_allowed': 0.38, 'nlarge': 120, 'num_of_epochs': 45000, 'lr': 0.058} - {'bear_inv': False, 'price_discount': 0.66}
+
 Unclassified - <function BayesianRidg_func at 0x000001D342E1D160> - {'miss_data_column_allowed': 0.76, 'miss_data_row_allowed': 0.27, 'nlarge': 105, 'max_iter': 175, 'alpha_1': 9.121479807372832e-06, 'alpha_2': 1.6035741169412822e-06, 'lambda_1': 6.330694315661464e-06, 'lambda_2': 3.7312150955678646e-06} - {'bear_inv': True, 'price_discount': 0.32} 
 
 Unclassified - <function ElasticNet_func at 0x000001D3433CC3A0> - {'miss_data_column_allowed': 0.79, 'miss_data_row_allowed': 0.41000000000000003, 'nlarge': 65, 'alpha': 1.7608669932119978, 'l1_ratio': 0.9535240523441845, 'fit_intercept': False, 'precompute': False, 'max_iter': 4400, 'tol': 0.0034210253902073966, 'selection': 'random'} - {'bear_inv': True, 'price_discount': 0.37} 
@@ -193,4 +223,17 @@ Utilities - <function CatBoostRegr_func at 0x000001D3433CC5E0> - {'miss_data_col
 Utilities - <function NeuralNetTorch_func at 0x000001D3433CC670> - {'miss_data_column_allowed': 0.75, 'miss_data_row_allowed': 0.5900000000000001, 'nlarge': 95, 'num_of_epochs': 70000, 'lr': 0.042} - {'bear_inv': False, 'price_discount': 0.86} 
 
 Full_list - <function BayesianRidg_func at 0x000001D342E1D160> - {'miss_data_column_allowed': 0.74, 'miss_data_row_allowed': 0.22, 'nlarge': 25, 'max_iter': 650, 'alpha_1': 4.735551403899564e-06, 'alpha_2': 1.0992851057247e-06, 'lambda_1': 7.872383308803416e-06, 'lambda_2': 3.7282768338959454e-06} - {'bear_inv': True, 'price_discount': 0.18000000000000002} 
+
+Full_list - <function ElasticNet_func at 0x00000232F65B23A0> - {'miss_data_column_allowed': 0.76, 'miss_data_row_allowed': 0.2, 'nlarge': 120, 'alpha': 1.4769445014121836, 'l1_ratio': 0.3066648718887008, 'fit_intercept': False, 'precompute': True, 'max_iter': 4600, 'tol': 0.002950557732956628, 'selection': 'cyclic'} - {'bear_inv': True, 'price_discount': 0.08} 
+
+Full_list - <function random_forest_func at 0x0000021B52AAE430> - {'miss_data_column_allowed': 0.5900000000000001, 'miss_data_row_allowed': 0.48000000000000004, 'nlarge': 10, 'bootstrap': False, 'max_depth': 260, 'max_features': 'sqrt', 'min_samples_leaf': 3, 'min_samples_split': 2, 'n_estimators': 3200} - {'bear_inv': True, 'price_discount': 0.31} 
+
+Full_list - <function XgBoost_func at 0x0000021B52AAE4C0> - {'miss_data_column_allowed': 0.73, 'miss_data_row_allowed': 0.30000000000000004, 'nlarge': 55, 'n_estimators': 600, 'learning_rate': 0.09081811951868406, 'scale_pos_weight': 3, 'max_depth': 13, 'subsample': 0.8241894118635854, 'colsample_bytree': 0.8549542726275614, 'min_child_weight': 1} - {'bear_inv': False, 'price_discount': 0.64} 
+
+Full_list - <function GradBoostRegr_func at 0x0000025DB263F550> - {'miss_data_column_allowed': 0.62, 'miss_data_row_allowed': 0.67, 'nlarge': 85, 'loss': 'absolute_error', 'criterion': 'squared_error', 'min_samples_split': 5, 'min_samples_leaf': 6, 'alpha': 0.8384654800196915, 'n_estimators': 50, 'learning_rate': 0.12658613420041295, 'max_depth': 13, 'subsample': 0.6824458271895828} - {'bear_inv': False, 'price_discount': 0.9600000000000001} 
+
+Full_list - <function CatBoostRegr_func at 0x0000025DB263F5E0> - {'miss_data_column_allowed': 0.79, 'miss_data_row_allowed': 0.71, 'nlarge': 10, 'n_estimators': 1800, 'learning_rate': 0.09782154165926113, 'max_depth': 10, 'subsample': 0.2355294690721161} - {'bear_inv': True, 'price_discount': 0.93} 
+
+Full_list - <function NeuralNetTorch_func at 0x0000025DB263F670> - {'miss_data_column_allowed': 0.79, 'miss_data_row_allowed': 0.2, 'nlarge': 75, 'num_of_epochs': 65000, 'lr': 0.025} - {'bear_inv': False, 'price_discount': 0.19}     
+  
 
