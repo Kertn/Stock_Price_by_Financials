@@ -68,7 +68,7 @@ def estimate_annualy_income(model, train_df, y_test, price_discount, bear_inv):
         return estim
 
 
-def model_invest(model, train_df, y_test, price_discount, bear_inv, sector_name):
+def model_invest(model, train_df, y_test, price_discount, bear_inv, sector_name, file_invest_name):
     tickers = train_df['Ticker']
     train_df.drop(['Stock_Price', 'Ticker'], axis=1, inplace=True)
     test_df = preprocessing.normalize(train_df.to_numpy())
@@ -76,56 +76,47 @@ def model_invest(model, train_df, y_test, price_discount, bear_inv, sector_name)
     if not len(test_df) == len(tickers) == len(y_test):
         print('Len_all', len(test_df), len(tickers), len(y_test))
         raise ValueError('Len test error')
-    for X, ticker, actual_price in zip(test_df, tickers, y_test):
-        current_ticker = str(ticker).split('.')[0]
-        current_year = str(ticker).split('.')[1]
+    with open(f'Invest\{file_invest_name}', 'w', newline='') as file:
+        fieldnames = ['Action', 'Ticker', 'Data_Price', 'Predicted_Price', 'Price_Discount', 'CurrentPrice',
+                      'Current_Profit']
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer.writeheader()
+        for X, ticker, actual_price in zip(test_df, tickers, y_test):
+            current_ticker = str(ticker).split('.')[0]
+            current_year = str(ticker).split('.')[1]
 
-        price_pred = model.predict(X.reshape(1, -1))
+            price_pred = model.predict(X.reshape(1, -1))
 
-        data = pd.read_csv(fr'C:\Program\Neural_Network\Market_Ratios_Model\All_lists\{sector_name}.csv', encoding='utf-8').values
-        ticker_word = data[int(current_ticker) - 1][0]
-        company = yf.Ticker(ticker_word)
-        fin = company.financials
-        all = pd.DataFrame(pd.concat([fin])).columns
+            data = pd.read_csv(fr'C:\Program\Neural_Network\Market_Ratios_Model\All_lists\{sector_name}.csv', encoding='utf-8').values
+            ticker_word = data[int(current_ticker) - 1][0]
+            company = yf.Ticker(ticker_word)
+            fin = company.financials
+            all = pd.DataFrame(pd.concat([fin])).columns
+            try:
+                #Checking relevance according to the 2024 year
+                if str(all[0]).split('-')[0] != '2023' or int(current_year) != len(all):
+                    continue
 
-        if str(all[0]).split('-')[0] != '2023' or int(current_year) != len(all):
-            continue
+                current_price = company.history(period='5d')['Close'][0]
+            except:
+                continue
 
-        try:
-            current_price = company.history(period='5d')['Close'][0]
-        except:
-            continue
-
-        if price_pred * price_discount > actual_price:
-            current_income.append(np.round(((current_price / actual_price) - 1) * 100, 2))
-            with open('Invest.csv', 'a', newline='') as file:
-                fieldnames = ['Action', 'Ticker', 'Data_Price', 'Predicted_Price', 'Price_Discount', 'CurrentPrice', 'Current_Profit']
-                writer = csv.DictWriter(file, fieldnames=fieldnames)
-
-                writer.writeheader()
+            if price_pred * price_discount > actual_price:
+                current_income.append(np.round(((current_price / actual_price) - 1) * 100, 2))
                 writer.writerow({'Action': 'Buy', 'Ticker': ticker_word, 'Data_Price': actual_price,
-                                 'Predicted_Price': np.round(price_pred, 2),
-                                 'Price_Discount': f'{np.round(((price_pred/actual_price)-1)*100, 2)}%',
-                                 'CurrentPrice': current_price,
-                                 'Current_Profit': f'{np.round(((current_price/actual_price)-1)*100, 2)}%'})
+                                     'Predicted_Price': np.round(price_pred, 2),
+                                     'Price_Discount': f'{np.round(((price_pred/actual_price)-1)*100, 2)}%',
+                                     'CurrentPrice': current_price,
+                                     'Current_Profit': f'{np.round(((current_price/actual_price)-1)*100, 2)}%'})
 
-                #file.write(f'Ticker - {ticker_word}, Current price - {round(actual_price, 2)}, model_predicted price - {np.round(price_pred, 2)}, Price discount - {np.round(((price_pred/actual_price)-1)*100, 2)}% - Buy, Price now - {current_price}, Profit: {np.round(((current_price/actual_price)-1)*100, 2)}%\n\n')
-
-        elif (price_pred < actual_price * price_discount) and bear_inv:
-            current_income.append(np.round(((actual_price/current_price)-1)*100, 2))
-            with open('Invest.csv', 'a', newline='') as file:
-                fieldnames = ['Action', 'Ticker', 'Data_Price', 'Predicted_Price', 'Price_Discount', 'CurrentPrice',
-                              'Current_Profit']
-                writer = csv.DictWriter(file, fieldnames=fieldnames)
-
-                writer.writeheader()
+            elif (price_pred < actual_price * price_discount) and bear_inv:
+                current_income.append(np.round(((actual_price/current_price)-1)*100, 2))
                 writer.writerow({'Action': 'Sell', 'Ticker': ticker_word, 'Data_Price': actual_price,
-                                 'Predicted_Price': np.round(price_pred, 2),
-                                 'Price_Discount': f'{np.round(((actual_price/price_pred) - 1) * 100, 2)}%',
-                                 'CurrentPrice': current_price,
-                                 'Current_Profit': f'{np.round(((actual_price/current_price) - 1) * 100, 2)}%'})
+                                     'Predicted_Price': np.round(price_pred, 2),
+                                     'Price_Discount': f'{np.round(((actual_price/price_pred) - 1) * 100, 2)}%',
+                                     'CurrentPrice': current_price,
+                                     'Current_Profit': f'{np.round(((actual_price/current_price) - 1) * 100, 2)}%'})
 
-                #file.write(f'Ticker - {ticker_word}, Current price - {round(actual_price, 2)}, model_predicted price - {np.round(price_pred, 2)}, Price discount - {np.round(((actual_price/price_pred)-1)*100, 2)}% - Sell, Price now - {current_price}, Profit: {np.round(((actual_price/current_price)-1)*100, 2)}%\n\n')
-
-    print('Current Income', current_income)
-    print('Mean Current Income', mean(current_income)*100, '%')
+        file.close()
+        print('Current Income', current_income)
+        print('Mean Current Income', mean(current_income), '%')

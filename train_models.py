@@ -2,6 +2,7 @@ from statistics import mean
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from catboost import CatBoostRegressor
 from sklearn.ensemble import GradientBoostingRegressor
@@ -213,7 +214,10 @@ def NeuralNetTorch_func(optuna, X_train, y_train, X_test, y_test, train, best_pa
     y_train = torch.from_numpy(y_train).float()
 
     X_test = torch.from_numpy(X_test).float()
-    y_test = y_test.to_numpy()
+
+    if type(y_test) != np.ndarray:
+        y_test = y_test.to_numpy()
+
     y_test = torch.from_numpy(y_test).float()
 
 

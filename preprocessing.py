@@ -153,7 +153,7 @@ def Model(model, sector_name, best_params):
 
 
 # Using the selected model and best params, predict the best-invested stocks
-def predict_invest(model, sector_name, best_params_model, best_params_estim):
+def predict_invest(model_name, sector_name, best_params_model, best_params_estim, file_invest_name):
     nlarge = best_params_model['nlarge']
     miss_data_column_allowed = best_params_model['miss_data_column_allowed']
     miss_data_row_allowed = best_params_model['miss_data_row_allowed']
@@ -178,20 +178,20 @@ def predict_invest(model, sector_name, best_params_model, best_params_estim):
     df_group = dataf[dataf['Ticker'].astype(str).str.endswith('1')]
     df_final = pd.concat([df_final, df_group]).drop_duplicates(keep=False)
 
-    # "TEST"
-    # none_df = df_final.groupby(df_final['Ticker'].astype(int)).first()
-    #
-    # df_final = pd.concat([df_final, none_df]).drop_duplicates(keep=False)
-    # "TEST"
-
     train_df = df_final.groupby(df_final['Ticker'].astype(int)).first()
 
     y_test = train_df['Stock_Price']
 
+    y_train = df_final['Stock_Price'].to_numpy()
+    x_train = preprocessing.normalize(df_final.drop(['Stock_Price', 'Ticker'], axis=1).to_numpy())
+
+    model, result = model_name(None, x_train, y_train, x_train, y_train, train=False, best_params=best_params_model)
+    print('Result_mape', result)
+
     bear_inv = best_params_estim['bear_inv']
     price_discount = best_params_estim['price_discount']
 
-    return model_invest(model, train_df, y_test, price_discount=price_discount, bear_inv=bear_inv, sector_name=sector_name)
+    return model_invest(model, train_df, y_test, price_discount=price_discount, bear_inv=bear_inv, sector_name=sector_name, file_invest_name=file_invest_name)
 
 
 # Using the selected model and best params, get the result of estimated model
@@ -215,7 +215,7 @@ def estim(model, sector_name, best_params, optuna_est):
     return estimate_annualy_income(model, train_df, y_test, price_discount=price_discount, bear_inv=bear_inv)
 
 
-def end_estim(model_name, sector_name, best_params, optuna_est):
+def test_estim(model_name, sector_name, best_params, optuna_est):
     nlarge = best_params['nlarge']
     miss_data_column_allowed = best_params['miss_data_column_allowed']
     miss_data_row_allowed = best_params['miss_data_row_allowed']

@@ -95,7 +95,7 @@ def main():
     # Define the best params for each model and write them into a text file
     #Optuna_Optim()
 
-    # Using the selected model and best params, get the test result (remove last year) of estimated models
+    # Using the selected model and best parameters, get the estimate and the test estimate result (remove last year) of the estimated models
     #Test_estim_model()
 
     # Using the selected model and best params, predict the best-invested stocks
