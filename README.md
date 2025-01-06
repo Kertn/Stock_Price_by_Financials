@@ -4,7 +4,7 @@
 
 ### Purpose and main idea of the project
 
-In the securities market one can often notice stocks, the price of which changes significantly within a short period of time, usually this is due to objective and significant changes in the company's business, nevertheless, it is not uncommon when a company's stock gets excessive or insufficient popularity, timely noticed such stocks are an brilliant investment with the prospect for the time when other investors will also notice the unfair price of the stock. Finding just such (undervalued or overvalued) stocks using machine learning models is the main goal of this project. At the end of the work, the best models will also generate an investment list for 2024.
+In the securities market one can often notice stocks, the price of which changes significantly within a short period of time, usually this is due to objective and significant changes in the company's business, nevertheless, it is not uncommon when a company's stock gets excessive or insufficient popularity, timely noticed such stocks are an brilliant investment with the prospect for the time when other investors will also notice the unfair price of the stock. Finding just such (undervalued or overvalued) stocks using machine learning models is the main goal of this project.
 
 ### Model Testing
 Testing and selection of the best models will take place through a “pseudo” investment in stocks (for a period of 1 year), the price of which the model considers biased, after which the program will take into account the change in stock prices for the next year and get the annual return of this model.
