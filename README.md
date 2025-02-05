@@ -1,4 +1,4 @@
-## Stock Price By Financials: Building Machine Learning Models to Determine Stock Price Based on Company Financials
+## Stock Price By Financials: Building Machine Learning Models to Determine Stock Price Based on Company Financials Statements
 
 ### Introduction
 
